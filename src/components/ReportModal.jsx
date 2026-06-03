@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
-const ReportModal = ({ isOpen, onClose, content, index }) => {
+const ReportModal = ({ isOpen, onClose, content, index, exportOrientation }) => {
   const [exporting, setExporting] = useState(false);
 
   if (!isOpen) return null;
@@ -25,18 +25,18 @@ const ReportModal = ({ isOpen, onClose, content, index }) => {
         <head><meta charset='utf-8'><title>Report</title>
         <style>
           @page Section1 {
-            size: 841.9pt 595.3pt; /* A4 Landscape */
-            mso-page-orientation: landscape;
-            margin: 40pt 40pt 40pt 40pt;
+            size: ${exportOrientation === 'portrait' ? '595.3pt 841.9pt' : '841.9pt 595.3pt'};
+            mso-page-orientation: ${exportOrientation === 'portrait' ? 'portrait' : 'landscape'};
+            margin: ${exportOrientation === 'portrait' ? '20pt 20pt 20pt 20pt' : '40pt 40pt 40pt 40pt'};
           }
           div.Section1 { page: Section1; }
-          body { font-family: Arial, sans-serif; font-size: 10pt; font-weight: normal; color: black; }
-          h1, h2, h3, h4, h5, h6 { font-size: 12pt; font-weight: bold; text-align: center; margin-bottom: 8px; color: black; }
+          body { font-family: Arial, sans-serif; font-size: ${exportOrientation === 'portrait' ? '8pt' : '10pt'}; font-weight: normal; color: black; }
+          h1, h2, h3, h4, h5, h6 { font-size: ${exportOrientation === 'portrait' ? '10pt' : '12pt'}; font-weight: bold; text-align: center; margin-bottom: 8px; color: black; }
           strong, b { font-weight: bold; }
           table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
-          td, th { border: 1px solid black; padding: 4px; text-align: left; font-size: 10pt; font-weight: normal; word-wrap: break-word; vertical-align: top; color: black; }
+          td, th { border: 1px solid black; padding: ${exportOrientation === 'portrait' ? '2px' : '4px'}; text-align: left; font-size: ${exportOrientation === 'portrait' ? '8pt' : '10pt'}; font-weight: normal; word-wrap: break-word; vertical-align: top; color: black; }
           ul, ol { margin-top: 2px; margin-bottom: 2px; padding-left: 15px; }
-          p { margin-bottom: 4px; font-size: 10pt; color: black; }
+          p { margin-bottom: 4px; font-size: ${exportOrientation === 'portrait' ? '8pt' : '10pt'}; color: black; }
         </style>
         </head><body><div class="Section1">${htmlOutput}</div></body></html>
       `;

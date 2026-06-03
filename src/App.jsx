@@ -27,6 +27,16 @@ function App() {
     }
   }, [theme]);
 
+  const [exportOrientation, setExportOrientation] = useState(() => {
+    return localStorage.getItem('exportOrientation') || 'landscape';
+  });
+
+  React.useEffect(() => {
+    localStorage.setItem('exportOrientation', exportOrientation);
+  }, [exportOrientation]);
+
+  const [reportMessages, setReportMessages] = useState([]);
+
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
@@ -48,9 +58,9 @@ function App() {
           </div>
         );
       case 'reports':
-        return <Report />;
+        return <Report exportOrientation={exportOrientation} messages={reportMessages} setMessages={setReportMessages} />;
       case 'settings':
-        return <Settings theme={theme} toggleTheme={toggleTheme} />;
+        return <Settings theme={theme} toggleTheme={toggleTheme} exportOrientation={exportOrientation} setExportOrientation={setExportOrientation} />;
       default:
         return <TimetableContent />;
     }

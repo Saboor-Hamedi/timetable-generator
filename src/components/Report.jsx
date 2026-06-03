@@ -78,9 +78,8 @@ const UserMessage = ({ content }) => {
   );
 };
 
-const Report = () => {
+const Report = ({ exportOrientation, messages, setMessages }) => {
   const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeModalData, setActiveModalData] = useState(null);
@@ -206,6 +205,7 @@ const Report = () => {
         onClose={() => setActiveModalData(null)}
         content={activeModalData?.content}
         index={activeModalData?.index}
+        exportOrientation={exportOrientation}
       />
     </div>
   );

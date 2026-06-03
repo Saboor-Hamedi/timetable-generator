@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ThemeToggle from './ThemeToggle';
 
-const Settings = ({ theme, toggleTheme }) => {
+const Settings = ({ theme, toggleTheme, exportOrientation, setExportOrientation }) => {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('deepseek_api_key') || '');
   const [saved, setSaved] = useState(false);
 
@@ -22,6 +22,31 @@ const Settings = ({ theme, toggleTheme }) => {
         </div>
         <div className="bg-white/5 rounded-xl border border-white/10 p-1">
           <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+        </div>
+      </div>
+
+      <div className="bg-[#1f2b3d] border border-white/10 rounded-xl p-6 mb-6 flex justify-between items-center">
+        <div>
+          <h3 className="text-lg font-semibold text-white mb-1">Export Orientation</h3>
+          <p className="text-sm text-white/50">Choose DOCX page format</p>
+        </div>
+        <div className="flex bg-white/5 rounded-xl border border-white/10 p-1">
+          <button
+            onClick={() => setExportOrientation('landscape')}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              exportOrientation === 'landscape' ? 'bg-[#f34868] text-white' : 'text-white/50 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            Landscape
+          </button>
+          <button
+            onClick={() => setExportOrientation('portrait')}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              exportOrientation === 'portrait' ? 'bg-[#f34868] text-white' : 'text-white/50 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            Portrait
+          </button>
         </div>
       </div>
       
