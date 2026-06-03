@@ -249,7 +249,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
 
       {/* Floating Notification */}
       {notification && (
-        <div className="fixed bottom-8 right-8 z-[100] flex items-center gap-3 bg-[#2a3950] border border-white/10 text-white/90 px-4 py-3 rounded-lg shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-300">
+        <div className="fixed top-6 right-6 z-[100] flex items-center gap-3 bg-[#2a3950] border border-white/10 text-white/90 px-4 py-3 rounded-lg shadow-2xl animate-in slide-in-from-top-4 fade-in duration-300">
           <div className={`rounded-full p-1 ${notification.type === 'error' ? 'bg-red-500' : 'bg-[#f34868]'}`}>
             {notification.type === 'error' ? <X className="w-3 h-3 text-white" /> : <Check className="w-3 h-3 text-white" />}
           </div>

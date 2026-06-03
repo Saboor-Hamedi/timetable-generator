@@ -50,23 +50,23 @@ const Dashboard = ({ exportOrientation }) => {
           <p className="text-white/50 text-sm">Go to the Reports tab, generate a timetable, and save it to your dashboard to view it here anytime.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {reports.map((report) => (
-            <div key={report.id} className="bg-[#1f2b3d] border border-white/10 rounded-xl p-4 sm:p-5 flex flex-col shadow-lg hover:border-white/20 transition-all">
-              <h3 className="text-sm sm:text-base font-semibold text-white mb-1.5 line-clamp-2 leading-snug">{report.title}</h3>
+            <div key={report.id} className="bg-[#1f2b3d] border border-white/10 rounded-xl p-4 sm:p-5 flex flex-col shadow-lg hover:border-white/20 transition-all min-w-0">
+              <h3 className="text-sm sm:text-base font-semibold text-white mb-1.5 truncate w-full" title={report.title}>{report.title}</h3>
               <p className="text-[11px] sm:text-xs text-white/40 mb-5 flex-1">
                 Saved on {new Date(report.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mt-auto">
                 <button
                   onClick={() => handleView(report.id)}
-                  className="flex-1 flex justify-center items-center gap-1.5 py-1.5 rounded-lg bg-[#f34868] hover:bg-[#ff5d7b] text-white text-[13px] font-medium transition-colors"
+                  className="flex-1 flex justify-center items-center gap-1.5 py-1.5 rounded-lg bg-[#f34868] hover:bg-[#ff5d7b] text-white text-[13px] font-medium transition-colors cursor-pointer"
                 >
                   <Eye className="w-3.5 h-3.5" /> View
                 </button>
                 <button
                   onClick={() => handleDelete(report.id)}
-                  className="flex justify-center items-center p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-red-400 border border-white/10 transition-colors"
+                  className="flex justify-center items-center p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-red-400 border border-white/10 transition-colors cursor-pointer"
                   title="Delete Report"
                 >
                   <Trash2 className="w-4 h-4" />
