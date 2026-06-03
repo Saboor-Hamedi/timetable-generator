@@ -5,6 +5,7 @@ import ReportModal from './ReportModal';
 
 const Dashboard = ({ exportOrientation }) => {
   const [reports, setReports] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeModalData, setActiveModalData] = useState(null);
 
   useEffect(() => {
@@ -17,6 +18,8 @@ const Dashboard = ({ exportOrientation }) => {
       setReports(data);
     } catch (e) {
       console.error("Failed to load reports", e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -36,7 +39,11 @@ const Dashboard = ({ exportOrientation }) => {
 
   return (
     <div className="p-4 sm:p-6 max-w-[1600px] mx-auto w-full">
-      {reports.length === 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20 mt-10">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#f34868]"></div>
+        </div>
+      ) : reports.length === 0 ? (
         <div className="bg-white/5 rounded-xl border border-white/10 p-8 text-center max-w-lg mx-auto mt-10">
           <CalendarDays className="w-12 h-12 text-white/20 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-white mb-2">No Reports Saved</h3>
