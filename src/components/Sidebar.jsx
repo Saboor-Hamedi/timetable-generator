@@ -16,7 +16,6 @@ const Sidebar = ({ isOpen, setIsOpen, activeMenu, setActiveMenu }) => {
 
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
-    { id: 'timetable', name: 'Timetable', icon: Calendar },
     { id: 'reports', name: 'Reports', icon: BarChart3 },
     { id: 'settings', name: 'Settings', icon: Settings },
   ];

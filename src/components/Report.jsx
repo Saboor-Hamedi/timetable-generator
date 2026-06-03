@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Loader2, Download, ArrowUp, Copy, Check } from 'lucide-react';
+import { Loader2, Download, ArrowUp, Copy, Check, Send, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import deepSeek from '../api/gpt/DeekSeek';
 import ReportModal from './ReportModal';
+import { saveReport } from '../api/db';
 
-const AssistantMessage = ({ content, index, isStreaming, onOpenModal }) => {
+const AssistantMessage = ({ content, index, isStreaming, onOpenModal, onSave }) => {
 
 
   return (
@@ -38,12 +39,20 @@ const AssistantMessage = ({ content, index, isStreaming, onOpenModal }) => {
             Generating response...
           </div>
         ) : (
-          <button
-            onClick={() => onOpenModal({ content, index })}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#f34868] hover:bg-[#ff5d7b] text-white transition-colors text-xs font-medium cursor-pointer"
-          >
-            Edit & Export
-          </button>
+          <>
+            <button
+              onClick={() => onOpenModal({ content, index })}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#f34868] hover:bg-[#ff5d7b] text-white transition-colors text-xs font-medium cursor-pointer"
+            >
+              Edit & Export
+            </button>
+            <button
+              onClick={() => onSave({ content, index })}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white transition-colors border border-white/10 text-xs font-medium cursor-pointer"
+            >
+              Save to Dashboard
+            </button>
+          </>
         )}
       </div>
     </div>
@@ -83,10 +92,38 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeModalData, setActiveModalData] = useState(null);
+  const [notification, setNotification] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleSaveReport = async ({ content }) => {
+    try {
+      const h1Match = content.match(/<h1>(.*?)<\/h1>/);
+      let title = "Timetable Report";
+      if (h1Match && h1Match[1]) {
+        title = h1Match[1].replace(/<[^>]+>/g, '').trim();
+      } else {
+        const titleMatch = content.match(/# (.*?)\n/);
+        if (titleMatch && titleMatch[1]) {
+          title = titleMatch[1].trim();
+        }
+      }
+
+      await saveReport({
+        id: Date.now(),
+        title: title || "Timetable Report",
+        content: content,
+        createdAt: new Date().toISOString()
+      });
+      setNotification('Report successfully saved to Dashboard!');
+      setTimeout(() => setNotification(null), 5000);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to save report to Dashboard.');
+    }
   };
 
   useEffect(() => {
@@ -159,6 +196,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
                       index={idx} 
                       isStreaming={loading && idx === messages.length - 1} 
                       onOpenModal={setActiveModalData}
+                      onSave={handleSaveReport}
                     />
                   )}
                 </div>
@@ -207,6 +245,19 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
         index={activeModalData?.index}
         exportOrientation={exportOrientation}
       />
+
+      {/* Floating Notification */}
+      {notification && (
+        <div className="fixed bottom-8 right-8 z-[100] flex items-center gap-3 bg-[#2a3950] border border-white/10 text-white/90 px-4 py-3 rounded-lg shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="bg-[#f34868] rounded-full p-1">
+            <Check className="w-3 h-3 text-white" />
+          </div>
+          <span className="text-[13px] font-medium tracking-wide">{notification}</span>
+          <button onClick={() => setNotification(null)} className="text-white/40 hover:text-white ml-2 transition-colors">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

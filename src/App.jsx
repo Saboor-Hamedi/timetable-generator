@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import TimetableContent from './components/TimetableContent';
+import Dashboard from './components/Dashboard';
 import Report from './components/Report';
 import Settings from './components/Settings';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeMenu, setActiveMenu] = useState(() => {
-    return localStorage.getItem('activeMenu') || 'timetable';
+    return localStorage.getItem('activeMenu') || 'dashboard';
   });
 
   React.useEffect(() => {
@@ -43,26 +43,14 @@ function App() {
 
   const renderContent = () => {
     switch (activeMenu) {
-      case 'timetable':
-        return <TimetableContent />;
       case 'dashboard':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-white mb-4">Dashboard</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white/5 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-2">Welcome!</h3>
-                <p className="text-white/70">Manage your timetable efficiently</p>
-              </div>
-            </div>
-          </div>
-        );
+        return <Dashboard exportOrientation={exportOrientation} />;
       case 'reports':
         return <Report exportOrientation={exportOrientation} messages={reportMessages} setMessages={setReportMessages} />;
       case 'settings':
         return <Settings theme={theme} toggleTheme={toggleTheme} exportOrientation={exportOrientation} setExportOrientation={setExportOrientation} />;
       default:
-        return <TimetableContent />;
+        return <Dashboard exportOrientation={exportOrientation} />;
     }
   };
 
