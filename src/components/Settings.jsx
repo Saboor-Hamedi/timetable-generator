@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import ThemeToggle from './ThemeToggle';
 
-const Settings = () => {
+const Settings = ({ theme, toggleTheme }) => {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('deepseek_api_key') || '');
   const [saved, setSaved] = useState(false);
 
@@ -13,6 +14,16 @@ const Settings = () => {
   return (
     <div className="p-6 max-w-2xl mx-auto w-full">
       <h2 className="text-2xl font-bold text-white mb-6">Settings</h2>
+      
+      <div className="bg-[#1f2b3d] border border-white/10 rounded-xl p-6 mb-6 flex justify-between items-center">
+        <div>
+          <h3 className="text-lg font-semibold text-white mb-1">Appearance</h3>
+          <p className="text-sm text-white/50">Toggle between light and dark mode</p>
+        </div>
+        <div className="bg-white/5 rounded-xl border border-white/10 p-1">
+          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+        </div>
+      </div>
       
       <div className="bg-[#1f2b3d] border border-white/10 rounded-xl p-6">
         <h3 className="text-lg font-semibold text-white mb-4">API Configuration</h3>

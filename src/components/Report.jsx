@@ -66,24 +66,24 @@ const AssistantMessage = ({ content, index }) => {
         </ReactMarkdown>
       </div>
       
-      <div className="flex items-center gap-3 border-t border-white/10 pt-4 mt-2">
+      <div className="flex items-center gap-3 border-t border-white/10 pt-3 mt-2">
         {docxUrl ? (
           <a
             href={docxUrl}
             download={`RPS_OBE_Report_${index + 1}.doc`}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/90 transition-colors text-sm font-medium cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 text-white/90 transition-colors text-xs font-medium cursor-pointer"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-3.5 h-3.5" />
             Export to DOCX
           </a>
         ) : (
           <button
             disabled
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 opacity-50 border border-white/10 text-white/90 text-sm font-medium cursor-not-allowed"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 opacity-50 border border-white/10 text-white/90 text-xs font-medium cursor-not-allowed"
           >
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
             Preparing DOCX...
           </button>
         )}
@@ -102,17 +102,20 @@ const UserMessage = ({ content }) => {
   };
 
   return (
-    <div className="bg-white/5 p-4 rounded-xl border border-white/10 text-white/90 text-sm mb-6 flex justify-between items-start group">
-      <div>
-        <span className="font-semibold text-[#f34868]">You: </span> {content}
+    <div className="flex justify-end mb-8 w-full group">
+      <div className="flex flex-col items-end max-w-[85%] md:max-w-[75%]">
+        <div className="bg-white/10 px-4 py-3 rounded-2xl rounded-tr-sm text-white/90 text-sm">
+          {content}
+        </div>
+        <button
+          onClick={handleCopyPrompt}
+          className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 mt-1.5 px-2 py-1 hover:bg-white/5 rounded text-white/40 hover:text-white/80 text-xs"
+          title="Copy prompt"
+        >
+          {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? 'Copied' : 'Copy'}
+        </button>
       </div>
-      <button
-        onClick={handleCopyPrompt}
-        className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-white/10 rounded-md text-white/50 hover:text-white shrink-0 ml-4"
-        title="Copy prompt"
-      >
-        {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-      </button>
     </div>
   );
 };
@@ -169,7 +172,7 @@ const Report = () => {
     <div className="flex flex-col h-full relative bg-[#2a3950]">
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto w-full">
-        <div className="max-w-3xl mx-auto w-full px-4 py-8 pb-32">
+        <div className="max-w-5xl mx-auto w-full px-4 py-8 pb-32">
           
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-white/40 mt-20">
@@ -202,7 +205,7 @@ const Report = () => {
 
       {/* Fixed Input Area at Bottom */}
       <div className="absolute bottom-0 left-0 right-0 p-4 pt-10 bg-gradient-to-t from-[#2a3950] via-[#2a3950] to-transparent pointer-events-none">
-        <div className="max-w-3xl mx-auto w-full relative pointer-events-auto">
+        <div className="max-w-5xl mx-auto w-full relative pointer-events-auto">
           <div className="bg-[#1f2b3d] rounded-2xl border border-white/15 p-1 pl-4 pr-12 flex items-center shadow-lg focus-within:border-white/30 transition-colors relative min-h-[56px]">
             <textarea
               value={prompt}

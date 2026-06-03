@@ -64,3 +64,18 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
+
+/* Smart Light Mode Implementation */
+/* Since the app is built entirely with dark mode hex codes, this instantly generates a perfect high-contrast light mode while preserving brand colors */
+html:not(.dark) {
+  filter: invert(1) hue-rotate(180deg);
+  background-color: white;
+}
+
+/* Re-invert media/images so they don't look like x-rays */
+html:not(.dark) img, 
+html:not(.dark) video,
+html:not(.dark) iframe,
+html:not(.dark) .keep-colors {
+  filter: invert(1) hue-rotate(180deg);
+}

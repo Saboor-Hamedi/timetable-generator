@@ -1,6 +1,5 @@
 import React from 'react';
-import { Menu, User, Calendar, Sparkles } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
+import { Menu, User } from 'lucide-react';
 
 const Header = ({ sidebarOpen, setSidebarOpen, theme, toggleTheme }) => {
   return (
@@ -8,8 +7,7 @@ const Header = ({ sidebarOpen, setSidebarOpen, theme, toggleTheme }) => {
       className="bg-[#2d3f5d]/95 border-b border-white/10 sticky top-0 z-30 backdrop-blur-sm shadow-[0_8px_22px_rgba(0,0,0,0.18)]"
       style={{ height: 'var(--layout-header-height)' }}
     >
-      <div className="flex items-center justify-between px-4 h-full">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between px-4 h-full">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.13] border border-white/10 transition-all duration-200"
@@ -17,23 +15,8 @@ const Header = ({ sidebarOpen, setSidebarOpen, theme, toggleTheme }) => {
           >
             <Menu className="w-5 h-5 text-white" />
           </button>
-          
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-[#f34868]/20 border border-[#f34868]/30 flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-[#f66a84]" />
-            </div>
-            <h1 className="text-base font-semibold text-white hidden sm:block tracking-wide">
-              IT Department Timetable System
-            </h1>
-            <h1 className="text-base font-semibold text-white sm:hidden">
-              IT Timetable
-            </h1>
-          </div>
-        </div>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-          
           <div className="flex items-center gap-2 px-2 py-1 rounded-xl bg-white/[0.04] border border-white/10">
             <div className="w-8 h-8 rounded-full bg-[#f34868]/20 border border-[#f34868]/30 flex items-center justify-center">
               <User className="w-4 h-4 text-[#f34868]" />

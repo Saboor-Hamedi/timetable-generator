@@ -45,7 +45,7 @@ function App() {
       case 'reports':
         return <Report />;
       case 'settings':
-        return <Settings />;
+        return <Settings theme={theme} toggleTheme={toggleTheme} />;
       default:
         return <TimetableContent />;
     }
