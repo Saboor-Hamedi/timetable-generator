@@ -1,0 +1,197 @@
+const DEFAULT_BASE_URL = 'https://api.deepseek.com';
+const DEFAULT_MODEL = 'deepseek-chat';
+
+class DeepSeek {
+  constructor(config = {}) {
+    this.apiKey =
+      localStorage.getItem('deepseek_api_key') ||
+      config.apiKey ||
+      import.meta.env.DEEP_SEEK_AI_API_KEY ||
+      import.meta.env.VITE_DEEP_SEEK_AI_API_KEY;
+    this.baseUrl = config.baseUrl || DEFAULT_BASE_URL;
+    this.model = config.model || DEFAULT_MODEL;
+    this.timeoutMs = Number(config.timeoutMs ?? 20000);
+  }
+
+  assertReady() {
+    if (!this.apiKey) {
+      throw new Error(
+        'DeepSeek API key is missing. Set DEEP_SEEK_AI_API_KEY in .env.',
+      );
+    }
+  }
+
+  validatePrompt(prompt) {
+    if (typeof prompt !== 'string' || !prompt.trim()) {
+      throw new Error('Prompt is required and must be a non-empty string.');
+    }
+  }
+
+  wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async requestWithRetry(url, options, retries = 2) {
+    let lastError;
+
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+
+      try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`DeepSeek API error ${response.status}: ${text || response.statusText}`);
+        }
+
+        return response;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        lastError = error;
+
+        if (attempt < retries) {
+          await this.wait(500 * (attempt + 1));
+        }
+      }
+    }
+
+    throw lastError || new Error('DeepSeek request failed.');
+  }
+
+  async generateReport(input, options = {}) {
+    this.assertReady();
+
+    let messages = [];
+    if (Array.isArray(input)) {
+      messages = input;
+    } else {
+      this.validatePrompt(input);
+      messages = [{ role: 'user', content: input.trim() }];
+    }
+
+    const {
+      systemPrompt = `You are a highly intelligent and professional assistant. 
+If the user asks a general question or wants to communicate, reason with them and respond normally as a conversational AI without restricting yourself to tables.
+
+HOWEVER, if the user asks to "generate a timetable", "RPS", or "lesson plan" (e.g., 'generate timetable about computer vision'), you MUST generate a highly detailed RPS (Semester Learning Plan) based on the OBE (Outcome-Based Education) layout. 
+By default, generate this in English. IF the user asks in Bahasa Indonesia, you MUST generate it in Bahasa Indonesia. Generate the number of meetings/rows requested (e.g., 5, 10, or 20). 
+
+When generating the RPS timetable, you MUST use the following series of Markdown and HTML tables EXACTLY. Make sure the university header, course info, and authorization section are combined into THIS EXACT HTML table to preserve the complex colspans (translated to English if the user asked in English, or kept in Bahasa if asked in Bahasa, except for the logo placeholder).
+
+<h1>[Document Title - Click to Edit]</h1>
+
+<table>
+  <tr>
+    <td rowspan="2" colspan="2" align="center" width="15%">[INSERT_LOGO_HERE]</td>
+    <td colspan="6" align="center" width="70%">
+      <strong>Universitas Pamulang</strong><br>
+      <strong>Program Pascasarjana</strong><br>
+      <strong>Program Studi Teknik Informatika S-2</strong>
+    </td>
+    <td colspan="1" align="center" width="15%">
+      Kode<br>Dokumen
+    </td>
+  </tr>
+  <tr>
+    <td colspan="7" align="center" style="background-color: #e0f7fa;">
+      <strong>RENCANA PEMBELAJARAN SEMESTER (SEMESTER LEARNING PLAN)</strong>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>MATA KULIAH (MK)</strong></td>
+    <td colspan="1"><strong>KODE</strong></td>
+    <td colspan="1"><strong>Rumpun MK</strong></td>
+    <td colspan="3" align="center"><strong>BOBOT (sks)</strong></td>
+    <td colspan="1"><strong>SEMESTER</strong></td>
+    <td colspan="1"><strong>Tgl Penyusunan</strong></td>
+  </tr>
+  <tr>
+    <td colspan="2">[Subject Name]</td>
+    <td colspan="1">[Course Code]</td>
+    <td colspan="1">[Category]</td>
+    <td colspan="1" align="center">T=3</td>
+    <td colspan="1" align="center">P=0</td>
+    <td colspan="1" align="center">ECTS=4.77</td>
+    <td colspan="1" align="center">[Semester]</td>
+    <td colspan="1">[Date]</td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>OTORISASI (AUTHORIZATION)</strong></td>
+    <td colspan="2"><strong>Pengembang RPS (RPS Developer)</strong></td>
+    <td colspan="3"><strong>Koordinator RMK (RMK Coordinator)</strong></td>
+    <td colspan="2"><strong>Koordinator Program Studi (Study Program Coordinator)</strong></td>
+  </tr>
+  <tr>
+    <td colspan="2"></td>
+    <td colspan="2">[Name/Title]</td>
+    <td colspan="3">[Name/Title]</td>
+    <td colspan="2">[Name/Title]</td>
+  </tr>
+</table>
+
+| Capaian Pembelajaran (Learning Outcomes) | Deskripsi (Description) |
+| --- | --- |
+| **CPL-PRODI** | **CPL-1**: [CPL Description]<br>**CPL-2**: [CPL Description] |
+| **CPMK** | **CPMK-1**: [CPMK Description]<br>**CPMK-2**: [CPMK Description] |
+
+| Pustaka & Dosen (References & Lecturers) | Detail |
+| --- | --- |
+| **Pustaka Utama (Main References)** | [1] [Reference 1]<br>[2] [Reference 2] |
+| **Pustaka Pendukung (Supporting)** | [1] [Reference 3] |
+| **Dosen Pengampu (Lecturers)** | [Lecturer Names] |
+
+### Detail Pertemuan (Meeting Details)
+
+| Week | Session | Final Ability (Sub-CPMK) | Assessment (Indicators) | Assessment (Criteria & Form) | Learning Method (Offline) | Learning Method (Online) | Learning Material [References] | Weight (%) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 1 | [Sub-CPMK for week 1] | 1. [Indicator 1]<br>2. [Indicator 2] | Criteria: [Criteria]<br>Form: [Form] | [Methods e.g., Lecture, Discussion]<br>[Time e.g., 3x50 mins] | [Online methods] | [Material topic]<br>[Ref 1] | 5% |
+| ... | ... | ... | ... | ... | ... | ... | ... | ... |
+
+Fill in the template with realistic, high-quality academic content related to the user's topic. Translate the table headers to the appropriate language based on the user's prompt (English by default, Bahasa Indonesia if requested in Bahasa). DO NOT USE EMOJIS.`,
+      maxTokens = 4000,
+      temperature = 0.5,
+      model = this.model,
+      retries = 2,
+    } = options;
+
+    const body = {
+      model,
+      temperature,
+      max_tokens: maxTokens,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...messages
+      ],
+    };
+
+    const response = await this.requestWithRetry(
+      `${this.baseUrl}/chat/completions`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify(body),
+      },
+      retries,
+    );
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content;
+
+    if (!content) {
+      throw new Error('DeepSeek returned an empty response.');
+    }
+
+    return content;
+  }
+}
+
+const deepSeek = new DeepSeek();
+
+export { DeepSeek };
+export default deepSeek;
