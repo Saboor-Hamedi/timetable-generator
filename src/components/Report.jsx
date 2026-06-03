@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader2, Download, ArrowUp, Copy, Check, Send, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import deepSeek from '../api/gpt/DeekSeek';
 import ReportModal from './ReportModal';
+import Notification from './Notification';
 import { saveReport } from '../api/db';
 
 const AssistantMessage = ({ content, index, isStreaming, onOpenModal, onSave }) => {
@@ -96,7 +96,6 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
 
   const showNotification = (text, type = 'success') => {
     setNotification({ text, type });
-    setTimeout(() => setNotification(null), 5000);
   };
 
   const scrollToBottom = () => {
@@ -247,18 +246,10 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
         exportOrientation={exportOrientation}
       />
 
-      {/* Floating Notification */}
-      {notification && (
-        <div className="fixed top-6 right-6 z-[100] flex items-center gap-3 bg-[#2a3950] border border-white/10 text-white/90 px-4 py-3 rounded-lg shadow-2xl animate-in slide-in-from-top-4 fade-in duration-300">
-          <div className={`rounded-full p-1 ${notification.type === 'error' ? 'bg-red-500' : 'bg-[#f34868]'}`}>
-            {notification.type === 'error' ? <X className="w-3 h-3 text-white" /> : <Check className="w-3 h-3 text-white" />}
-          </div>
-          <span className="text-[13px] font-medium tracking-wide">{notification.text}</span>
-          <button onClick={() => setNotification(null)} className="text-white/40 hover:text-white ml-2 transition-colors">
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
+      <Notification 
+        notification={notification} 
+        onClose={() => setNotification(null)} 
+      />
     </div>
   );
 };
