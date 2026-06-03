@@ -90,10 +90,14 @@ const UserMessage = ({ content }) => {
 const Report = ({ exportOrientation, messages, setMessages }) => {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [activeModalData, setActiveModalData] = useState(null);
   const [notification, setNotification] = useState(null);
   const messagesEndRef = useRef(null);
+
+  const showNotification = (text, type = 'success') => {
+    setNotification({ text, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -118,11 +122,10 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
         content: content,
         createdAt: new Date().toISOString()
       });
-      setNotification('Report successfully saved to Dashboard!');
-      setTimeout(() => setNotification(null), 5000);
+      showNotification('Report successfully saved to Dashboard!', 'success');
     } catch (err) {
       console.error(err);
-      setError('Failed to save report to Dashboard.');
+      showNotification('Failed to save report to Dashboard.', 'error');
     }
   };
 
@@ -132,7 +135,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
-      setError('Please type your report request first.');
+      showNotification('Please type your report request first.', 'error');
       return;
     }
 
@@ -142,7 +145,6 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
     setMessages(updatedMessages);
     setPrompt('');
     setLoading(true);
-    setError('');
 
     try {
       const assistantMsgIndex = updatedMessages.length;
@@ -158,7 +160,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
         }
       });
     } catch (err) {
-      setError(err?.message || 'Failed to generate report.');
+      showNotification(err?.message || 'Failed to generate report.', 'error');
       setPrompt(userMessage.content);
       setMessages(messages);
     } finally {
@@ -234,7 +236,6 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
               )}
             </button>
           </div>
-          {error && <p className="text-red-400 text-sm mt-2 text-center">{error}</p>}
         </div>
       </div>
 
@@ -249,10 +250,10 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
       {/* Floating Notification */}
       {notification && (
         <div className="fixed bottom-8 right-8 z-[100] flex items-center gap-3 bg-[#2a3950] border border-white/10 text-white/90 px-4 py-3 rounded-lg shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-300">
-          <div className="bg-[#f34868] rounded-full p-1">
-            <Check className="w-3 h-3 text-white" />
+          <div className={`rounded-full p-1 ${notification.type === 'error' ? 'bg-red-500' : 'bg-[#f34868]'}`}>
+            {notification.type === 'error' ? <X className="w-3 h-3 text-white" /> : <Check className="w-3 h-3 text-white" />}
           </div>
-          <span className="text-[13px] font-medium tracking-wide">{notification}</span>
+          <span className="text-[13px] font-medium tracking-wide">{notification.text}</span>
           <button onClick={() => setNotification(null)} className="text-white/40 hover:text-white ml-2 transition-colors">
             <X className="w-3.5 h-3.5" />
           </button>
