@@ -77,7 +77,8 @@ class DeepSeek {
 If the user asks a general question or wants to communicate, reason with them and respond normally as a conversational AI without restricting yourself to tables.
 
 HOWEVER, if the user asks to "generate a timetable", "RPS", or "lesson plan" (e.g., 'generate timetable about computer vision'), you MUST generate a highly detailed RPS (Semester Learning Plan) based on the OBE (Outcome-Based Education) layout. 
-By default, generate this in English. IF the user asks in Bahasa Indonesia, you MUST generate it in Bahasa Indonesia. Generate the number of meetings/rows requested (e.g., 5, 10, or 20). 
+By default, generate this in English. IF the user asks in Bahasa Indonesia, you MUST generate it in Bahasa Indonesia. 
+CRITICAL INSTRUCTION: You MUST generate EXACTLY the number of meetings/rows the user requests. If they ask for 2 topics, generate EXACTLY 2 rows in the Detail Pertemuan table. DO NOT generate 8 or 14 rows by default. Pay extreme attention to the user's requested number of topics.
 
 When generating the RPS timetable, you MUST use the following series of Markdown and HTML tables EXACTLY. Make sure the university header, course info, and authorization section are combined into THIS EXACT HTML table to preserve the complex colspans (translated to English if the user asked in English, or kept in Bahasa if asked in Bahasa, except for the logo placeholder).
 
@@ -85,7 +86,9 @@ When generating the RPS timetable, you MUST use the following series of Markdown
 
 <table>
   <tr>
-    <td rowspan="2" colspan="2" align="center" width="15%">[INSERT_LOGO_HERE]</td>
+    <td colspan="2" align="center" width="15%">
+      <img src="https://simpel.unpam.ac.id/assets/admin/images/Logo_Unpam.png" width="80" height="80" alt="Logo Unpam">
+    </td>
     <td colspan="6" align="center" width="70%">
       <strong>Universitas Pamulang</strong><br>
       <strong>Program Pascasarjana</strong><br>
@@ -96,7 +99,7 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     </td>
   </tr>
   <tr>
-    <td colspan="7" align="center" style="background-color: #e0f7fa;">
+    <td colspan="9" align="center" style="background-color: #d9edf2; color: #000000;">
       <strong>RENCANA PEMBELAJARAN SEMESTER (SEMESTER LEARNING PLAN)</strong>
     </td>
   </tr>
@@ -109,14 +112,14 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="1"><strong>Tgl Penyusunan</strong></td>
   </tr>
   <tr>
-    <td colspan="2">[Subject Name]</td>
-    <td colspan="1">[Course Code]</td>
-    <td colspan="1">[Category]</td>
-    <td colspan="1" align="center">T=3</td>
-    <td colspan="1" align="center">P=0</td>
-    <td colspan="1" align="center">ECTS=4.77</td>
-    <td colspan="1" align="center">[Semester]</td>
-    <td colspan="1">[Date]</td>
+    <td colspan="2">[AI Generated Subject Name]</td>
+    <td colspan="1">[AI Generated Course Code]</td>
+    <td colspan="1">[AI Generated Category]</td>
+    <td colspan="1" align="center">[AI Generated T value, e.g. T=3]</td>
+    <td colspan="1" align="center">[AI Generated P value, e.g. P=0]</td>
+    <td colspan="1" align="center">[AI Generated ECTS, e.g. ECTS=4.77]</td>
+    <td colspan="1" align="center">[AI Generated Semester, e.g. 3]</td>
+    <td colspan="1">[AI Generated Date, e.g. 2025-01-15]</td>
   </tr>
   <tr>
     <td colspan="2"><strong>OTORISASI (AUTHORIZATION)</strong></td>
@@ -126,9 +129,9 @@ When generating the RPS timetable, you MUST use the following series of Markdown
   </tr>
   <tr>
     <td colspan="2"></td>
-    <td colspan="2">[Name/Title]</td>
-    <td colspan="3">[Name/Title]</td>
-    <td colspan="2">[Name/Title]</td>
+    <td colspan="2">[Static Name/Title]</td>
+    <td colspan="3">[Static Name/Title]</td>
+    <td colspan="2">[Static Name/Title]</td>
   </tr>
 </table>
 
@@ -155,12 +158,14 @@ Fill in the template with realistic, high-quality academic content related to th
       temperature = 0.5,
       model = this.model,
       retries = 2,
+      onChunk
     } = options;
 
     const body = {
       model,
       temperature,
       max_tokens: maxTokens,
+      stream: true,
       messages: [
         { role: 'system', content: systemPrompt },
         ...messages
@@ -180,14 +185,43 @@ Fill in the template with realistic, high-quality academic content related to th
       retries,
     );
 
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let fullContent = '';
+    let buffer = '';
 
-    if (!content) {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed === 'data: [DONE]') continue;
+        
+        if (trimmed.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(trimmed.slice(6));
+            const delta = data.choices[0]?.delta?.content;
+            if (delta) {
+              fullContent += delta;
+              if (onChunk) onChunk(delta, fullContent);
+            }
+          } catch (e) {
+            // ignore JSON parse errors for partial chunks
+          }
+        }
+      }
+    }
+
+    if (!fullContent) {
       throw new Error('DeepSeek returned an empty response.');
     }
 
-    return content;
+    return fullContent;
   }
 }
 

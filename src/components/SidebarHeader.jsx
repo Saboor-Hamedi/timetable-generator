@@ -1,5 +1,6 @@
 import React from 'react';
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, X } from 'lucide-react';
+import logoImg from '../assets/logo.png';
 
 const SidebarHeader = ({ isMobile, onClose }) => {
   return (
@@ -8,8 +9,8 @@ const SidebarHeader = ({ isMobile, onClose }) => {
       style={{ height: 'var(--layout-header-height)' }}
     >
       <div className="flex items-center gap-2.5">
-        <div className="w-9 h-9 rounded-xl bg-[#f34868]/20 flex items-center justify-center border border-[#f34868]/30">
-          <CalendarDays className="w-5 h-5 text-[#f66a84]" />
+        <div className="w-9 h-9 flex items-center justify-center shrink-0">
+          <img src={logoImg} alt="Logo" className="w-9 h-9 object-contain keep-colors" />
         </div>
         <div className="leading-tight">
           <p className="text-white text-[13px] font-semibold">Timetable</p>
@@ -20,10 +21,10 @@ const SidebarHeader = ({ isMobile, onClose }) => {
       {isMobile && (
         <button
           onClick={onClose}
-          className="px-2.5 py-1.5 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition-all duration-200 text-xs"
+          className="p-1.5 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition-all duration-200"
           aria-label="Close sidebar"
         >
-          Close
+          <X className="w-5 h-5" />
         </button>
       )}
     </div>

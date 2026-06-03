@@ -93,10 +93,10 @@ const TimetableContent = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-3 sm:p-6">
       {/* Form Section */}
-      <div className="bg-white/5 rounded-lg p-6 mb-8">
-        <h2 className="text-xl font-semibold text-white mb-4">
+      <div className="bg-white/5 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+        <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">
           {editingId ? 'Edit Timetable Entry' : 'Add New Timetable Entry'}
         </h2>
         
@@ -164,7 +164,7 @@ const TimetableContent = () => {
       {/* Table Section */}
       <div className="bg-white/5 rounded-lg overflow-hidden">
         <div className="p-4 border-b border-white/10">
-          <h2 className="text-xl font-semibold text-white">Timetable Entries</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-white">Timetable Entries</h2>
           <p className="text-white/60 text-base mt-1">
             Total: {entries.length} entry{entries.length !== 1 ? 's' : ''}
           </p>

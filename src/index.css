@@ -66,10 +66,31 @@ body {
 }
 
 /* Smart Light Mode Implementation */
-/* Since the app is built entirely with dark mode hex codes, this instantly generates a perfect high-contrast light mode while preserving brand colors */
 html:not(.dark) {
   filter: invert(1) hue-rotate(180deg);
   background-color: white;
+}
+
+/* Force specific backgrounds to black in light mode so they invert to white/light grey */
+html:not(.dark) body,
+html:not(.dark) .bg-\[\#2a3950\],
+html:not(.dark) .bg-\[\#1f2b3d\],
+html:not(.dark) .bg-\[\#344867\]\/70,
+html:not(.dark) .bg-\[\#344867\]\/35,
+html:not(.dark) .bg-white\/\[0\.03\],
+html:not(.dark) header {
+  background-color: #000000 !important;
+}
+
+/* Force text to pure black in light mode (since it's inverted, we set it to white) */
+html:not(.dark) .text-white,
+html:not(.dark) .text-white\/90,
+html:not(.dark) .text-white\/80,
+html:not(.dark) .text-white\/70,
+html:not(.dark) .text-white\/60,
+html:not(.dark) .text-white\/50,
+html:not(.dark) .text-white\/40 {
+  color: #ffffff !important;
 }
 
 /* Re-invert media/images so they don't look like x-rays */

@@ -5,10 +5,15 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import deepSeek from '../api/gpt/DeekSeek';
 
-const AssistantMessage = ({ content, index }) => {
+const AssistantMessage = ({ content, index, isStreaming }) => {
   const [docxUrl, setDocxUrl] = useState('');
 
   useEffect(() => {
+    if (isStreaming) {
+      setDocxUrl('');
+      return;
+    }
+
     const timer = setTimeout(() => {
       const contentElement = document.getElementById(`report-content-${index}`);
       if (!contentElement) return;
@@ -42,7 +47,7 @@ const AssistantMessage = ({ content, index }) => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [content, index]);
+  }, [content, index, isStreaming]);
 
   return (
     <div className="flex flex-col gap-4 w-full mb-8">
@@ -51,12 +56,12 @@ const AssistantMessage = ({ content, index }) => {
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw]}
           components={{
-            table: ({node, ...props}) => <table className="w-full border-collapse border border-white/20 mb-6 rounded-lg overflow-hidden" {...props} />,
+            table: ({node, ...props}) => <table className="w-full border-collapse border border-white/20 mb-6 rounded-lg overflow-hidden mx-1.5 sm:mx-0" style={{ width: 'calc(100% - 12px)' }} {...props} />,
             th: ({node, ...props}) => <th className="border border-white/20 bg-white/10 p-2 text-[13px] text-left font-semibold" {...props} />,
             td: ({node, ...props}) => <td className="border border-white/20 p-2 text-[13px]" {...props} />,
-            h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-4 mt-6 text-[#f34868]" {...props} />,
-            h2: ({node, ...props}) => <h2 className="text-xl font-bold mb-3 mt-5" {...props} />,
-            h3: ({node, ...props}) => <h3 className="text-lg font-bold mb-2 mt-4" {...props} />,
+            h1: ({node, ...props}) => <h1 className="text-xl sm:text-2xl font-bold mb-6 mt-4 text-white text-center leading-snug" {...props} />,
+            h2: ({node, ...props}) => <h2 className="text-lg sm:text-xl font-bold mb-3 mt-5" {...props} />,
+            h3: ({node, ...props}) => <h3 className="text-base sm:text-lg font-bold mb-2 mt-4" {...props} />,
             p: ({node, ...props}) => <p className="mb-4" {...props} />,
             ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
             ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />
@@ -67,7 +72,12 @@ const AssistantMessage = ({ content, index }) => {
       </div>
       
       <div className="flex items-center gap-3 border-t border-white/10 pt-3 mt-2">
-        {docxUrl ? (
+        {isStreaming ? (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 text-white/50 text-xs font-medium">
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#f34868]" />
+            Generating response...
+          </div>
+        ) : docxUrl ? (
           <a
             href={docxUrl}
             download={`RPS_OBE_Report_${index + 1}.doc`}
@@ -150,8 +160,18 @@ const Report = () => {
     setError('');
 
     try {
-      const result = await deepSeek.generateReport(updatedMessages);
-      setMessages([...updatedMessages, { role: 'assistant', content: result }]);
+      const assistantMsgIndex = updatedMessages.length;
+      setMessages([...updatedMessages, { role: 'assistant', content: '' }]);
+      
+      await deepSeek.generateReport(updatedMessages, {
+        onChunk: (delta, fullContent) => {
+          setMessages(prev => {
+            const newMessages = [...prev];
+            newMessages[assistantMsgIndex] = { role: 'assistant', content: fullContent };
+            return newMessages;
+          });
+        }
+      });
     } catch (err) {
       setError(err?.message || 'Failed to generate report.');
       setPrompt(userMessage.content);
@@ -172,60 +192,58 @@ const Report = () => {
     <div className="flex flex-col h-full relative bg-[#2a3950]">
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto w-full">
-        <div className="max-w-5xl mx-auto w-full px-4 py-8 pb-32">
+        <div className="max-w-7xl mx-auto w-full px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
           
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-white/40 mt-20">
-              <h2 className="text-2xl font-semibold mb-2">Generate Timetable / Report</h2>
-              <p className="text-sm">Type your prompt below to start.</p>
+            <div className="flex flex-col items-center justify-center h-full text-white/40 mt-10 sm:mt-20 px-4 text-center">
+              <h2 className="text-lg sm:text-2xl font-semibold mb-2">Universitas Pamulang</h2>
+              <p className="text-xs sm:text-sm">Program Pascasarjana • Teknik Informatika S-2</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-2 w-full">
+            <div className="flex flex-col gap-2 w-full pb-4">
               {messages.map((msg, idx) => (
                 <div key={idx} className="w-full">
                   {msg.role === 'user' ? (
                     <UserMessage content={msg.content} />
                   ) : (
-                    <AssistantMessage content={msg.content} index={idx} />
+                    <AssistantMessage 
+                      content={msg.content} 
+                      index={idx} 
+                      isStreaming={loading && idx === messages.length - 1} 
+                    />
                   )}
                 </div>
               ))}
               
-              {loading && (
-                <div className="flex items-center gap-3 text-white/50 text-sm mt-2 mb-8">
-                  <Loader2 className="w-5 h-5 animate-spin text-[#f34868]" />
-                  Generating response...
-                </div>
-              )}
               <div ref={messagesEndRef} />
             </div>
           )}
         </div>
       </div>
 
-      {/* Fixed Input Area at Bottom */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 pt-10 bg-gradient-to-t from-[#2a3950] via-[#2a3950] to-transparent pointer-events-none">
-        <div className="max-w-5xl mx-auto w-full relative pointer-events-auto">
-          <div className="bg-[#1f2b3d] rounded-2xl border border-white/15 p-1 pl-4 pr-12 flex items-center shadow-lg focus-within:border-white/30 transition-colors relative min-h-[56px]">
+      {/* Fixed Input Area at Bottom (Flex child, no longer absolute to prevent overlap) */}
+      <div className="shrink-0 w-full p-2 sm:p-3 bg-[#2a3950] border-t border-white/5">
+        <div className="max-w-5xl mx-auto w-full">
+          <div className="bg-[#1f2b3d] rounded-2xl border border-white/15 p-1 pl-3 sm:pl-4 pr-12 flex items-center shadow-lg focus-within:border-white/30 transition-colors relative min-h-[44px] sm:min-h-[48px]">
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Enter topic (e.g. Computer Vision)..."
+              placeholder="Enter topic..."
               rows={1}
-              className="w-full bg-transparent text-white resize-none outline-none py-4 text-base"
+              className="w-full bg-transparent text-white resize-none outline-none py-2 sm:py-2.5 text-sm sm:text-base"
               style={{ overflow: 'hidden' }}
             />
 
             <button
               onClick={handleGenerate}
               disabled={loading || !prompt.trim()}
-              className="absolute right-2 bottom-2 p-2 rounded-lg bg-[#f34868] text-white hover:bg-[#ff5d7b] disabled:opacity-50 disabled:bg-gray-600 disabled:text-white transition-colors flex items-center justify-center h-10 w-10"
+              className="absolute right-1.5 sm:right-2 bottom-1 sm:bottom-1.5 p-1.5 rounded-lg bg-[#f34868] text-white hover:bg-[#ff5d7b] disabled:opacity-50 disabled:bg-gray-600 disabled:text-white transition-colors flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9"
             >
               {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
               ) : (
-                <ArrowUp className="w-5 h-5" />
+                <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
               )}
             </button>
           </div>
