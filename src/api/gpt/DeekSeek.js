@@ -191,6 +191,7 @@ Fill in the template with realistic, high-quality academic content related to th
     const decoder = new TextDecoder('utf-8');
     let fullContent = '';
     let buffer = '';
+    let lastChunkTime = Date.now();
 
     while (true) {
       const { done, value } = await reader.read();
@@ -210,7 +211,11 @@ Fill in the template with realistic, high-quality academic content related to th
             const delta = data.choices[0]?.delta?.content;
             if (delta) {
               fullContent += delta;
-              if (onChunk) onChunk(delta, fullContent);
+              const now = Date.now();
+              if (now - lastChunkTime > 100) {
+                if (onChunk) onChunk(delta, fullContent);
+                lastChunkTime = now;
+              }
             }
           } catch (e) {
             // ignore JSON parse errors for partial chunks
@@ -218,6 +223,9 @@ Fill in the template with realistic, high-quality academic content related to th
         }
       }
     }
+    
+    // Ensure final state is always pushed
+    if (onChunk) onChunk('', fullContent);
 
     if (!fullContent) {
       throw new Error('DeepSeek returned an empty response.');

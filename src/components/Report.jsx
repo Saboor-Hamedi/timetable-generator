@@ -122,7 +122,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
         content: content,
         createdAt: new Date().toISOString()
       });
-      showNotification('Report successfully saved to Dashboard!', 'success');
+      showNotification('Report saved', 'success');
     } catch (err) {
       console.error(err);
       showNotification('Failed to save report to Dashboard.', 'error');

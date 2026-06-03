@@ -17,10 +17,9 @@ const Notification = ({ notification, onClose }) => {
         {notification.type === 'error' ? <X className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" /> : <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />}
       </div>
       
-      {/* Responsive Text */}
-      <span className="text-xs sm:text-[13px] font-medium tracking-wide">
-        <span className="hidden sm:inline">{notification.text}</span>
-        <span className="sm:hidden">{notification.shortText || (notification.type === 'error' ? 'Error' : 'Saved')}</span>
+      {/* Text */}
+      <span className="text-xs sm:text-[13px] font-medium tracking-wide whitespace-nowrap">
+        {notification.text}
       </span>
       
       <button onClick={onClose} className="text-white/40 hover:text-white ml-1 sm:ml-2 transition-colors flex items-center justify-center">
