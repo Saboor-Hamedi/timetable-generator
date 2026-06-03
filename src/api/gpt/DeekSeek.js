@@ -1,5 +1,6 @@
 const DEFAULT_BASE_URL = 'https://api.deepseek.com';
 const DEFAULT_MODEL = 'deepseek-chat';
+import logoImg from '../../assets/logo.png';
 
 class DeepSeek {
   constructor(config = {}) {
@@ -87,7 +88,7 @@ When generating the RPS timetable, you MUST use the following series of Markdown
 <table>
   <tr>
     <td colspan="2" align="center" width="15%">
-      <img src="https://simpel.unpam.ac.id/assets/admin/images/Logo_Unpam.png" width="80" height="80" alt="Logo Unpam">
+      <img src="${window.location.origin}${logoImg}" width="80" height="80" alt="Logo Unpam">
     </td>
     <td colspan="6" align="center" width="70%">
       <strong>Universitas Pamulang</strong><br>
@@ -119,7 +120,7 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="1" align="center">[AI Generated P value, e.g. P=0]</td>
     <td colspan="1" align="center">[AI Generated ECTS, e.g. ECTS=4.77]</td>
     <td colspan="1" align="center">[AI Generated Semester, e.g. 3]</td>
-    <td colspan="1">[AI Generated Date, e.g. 2025-01-15]</td>
+    <td colspan="1">[Static Current Date: ${new Date().toISOString().split('T')[0]}]</td>
   </tr>
   <tr>
     <td colspan="2"><strong>OTORISASI (AUTHORIZATION)</strong></td>

@@ -4,50 +4,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import deepSeek from '../api/gpt/DeekSeek';
+import ReportModal from './ReportModal';
 
-const AssistantMessage = ({ content, index, isStreaming }) => {
-  const [docxUrl, setDocxUrl] = useState('');
+const AssistantMessage = ({ content, index, isStreaming, onOpenModal }) => {
 
-  useEffect(() => {
-    if (isStreaming) {
-      setDocxUrl('');
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      const contentElement = document.getElementById(`report-content-${index}`);
-      if (!contentElement) return;
-      
-      const htmlOutput = contentElement.innerHTML;
-  
-      const fullHtml = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head><meta charset='utf-8'><title>Report</title>
-        <style>
-          @page Section1 {
-            size: 841.9pt 595.3pt; /* A4 Landscape */
-            mso-page-orientation: landscape;
-            margin: 40pt 40pt 40pt 40pt;
-          }
-          div.Section1 { page: Section1; }
-          body { font-family: Arial, sans-serif; font-size: 10pt; font-weight: normal; color: black; }
-          h1, h2, h3, h4, h5, h6 { font-size: 12pt; font-weight: bold; text-align: center; margin-bottom: 8px; color: black; }
-          strong, b { font-weight: bold; }
-          table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
-          td, th { border: 1px solid black; padding: 4px; text-align: left; font-size: 10pt; font-weight: normal; word-wrap: break-word; vertical-align: top; color: black; }
-          ul, ol { margin-top: 2px; margin-bottom: 2px; padding-left: 15px; }
-          p { margin-bottom: 4px; font-size: 10pt; color: black; }
-        </style>
-        </head><body><div class="Section1">${htmlOutput}</div></body></html>
-      `;
-  
-      const blob = new Blob(['\ufeff', fullHtml], { type: 'application/msword' });
-      const url = URL.createObjectURL(blob);
-      setDocxUrl(url);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [content, index, isStreaming]);
 
   return (
     <div className="flex flex-col gap-4 w-full mb-8">
@@ -77,24 +37,12 @@ const AssistantMessage = ({ content, index, isStreaming }) => {
             <Loader2 className="w-3.5 h-3.5 animate-spin text-[#f34868]" />
             Generating response...
           </div>
-        ) : docxUrl ? (
-          <a
-            href={docxUrl}
-            download={`RPS_OBE_Report_${index + 1}.doc`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 text-white/90 transition-colors text-xs font-medium cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5" />
-            Export to DOCX
-          </a>
         ) : (
           <button
-            disabled
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 opacity-50 border border-white/10 text-white/90 text-xs font-medium cursor-not-allowed"
+            onClick={() => onOpenModal({ content, index })}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#f34868] hover:bg-[#ff5d7b] text-white transition-colors text-xs font-medium cursor-pointer"
           >
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            Preparing DOCX...
+            Edit & Export
           </button>
         )}
       </div>
@@ -135,6 +83,7 @@ const Report = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [activeModalData, setActiveModalData] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -210,6 +159,7 @@ const Report = () => {
                       content={msg.content} 
                       index={idx} 
                       isStreaming={loading && idx === messages.length - 1} 
+                      onOpenModal={setActiveModalData}
                     />
                   )}
                 </div>
@@ -250,6 +200,13 @@ const Report = () => {
           {error && <p className="text-red-400 text-sm mt-2 text-center">{error}</p>}
         </div>
       </div>
+
+      <ReportModal 
+        isOpen={!!activeModalData}
+        onClose={() => setActiveModalData(null)}
+        content={activeModalData?.content}
+        index={activeModalData?.index}
+      />
     </div>
   );
 };
