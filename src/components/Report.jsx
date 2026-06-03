@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader2, Download, ArrowUp, Copy, Check, Send, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import deepSeek from '../api/gpt/DeekSeek';
 import ReportModal from './ReportModal';
@@ -177,11 +178,11 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
   return (
     <div className="flex flex-col h-full relative bg-[#2a3950]">
       {/* Scrollable Content Area */}
-      <div className="flex-1 overflow-y-auto w-full">
-        <div className="max-w-7xl mx-auto w-full px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="flex-1 overflow-y-auto w-full flex flex-col">
+        <div className={`max-w-7xl mx-auto w-full px-2 sm:px-6 lg:px-8 py-4 sm:py-8 ${messages.length === 0 ? 'flex-1 flex flex-col' : ''}`}>
           
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-white/40 mt-10 sm:mt-20 px-4 text-center">
+            <div className="flex-1 flex flex-col items-center justify-center text-white/40 px-4 text-center min-h-[50vh]">
               <h2 className="text-lg sm:text-2xl font-semibold mb-2">Universitas Pamulang</h2>
               <p className="text-xs sm:text-sm">Program Pascasarjana • Teknik Informatika S-2</p>
             </div>
