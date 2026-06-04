@@ -6,9 +6,7 @@ class DeepSeek {
   constructor(config = {}) {
     this.apiKey =
       localStorage.getItem('deepseek_api_key') ||
-      config.apiKey ||
-      import.meta.env.DEEP_SEEK_AI_API_KEY ||
-      import.meta.env.VITE_DEEP_SEEK_AI_API_KEY;
+      config.apiKey;
     this.baseUrl = config.baseUrl || DEFAULT_BASE_URL;
     this.model = config.model || DEFAULT_MODEL;
     this.timeoutMs = Number(config.timeoutMs ?? 20000);
