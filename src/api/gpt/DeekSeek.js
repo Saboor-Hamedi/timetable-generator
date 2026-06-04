@@ -139,7 +139,7 @@ When generating the RPS timetable, you MUST use the following series of Markdown
 
   <tr>
     <td rowspan="8" colspan="2" width="20%"><strong>Capaian Pembelajaran (CP)</strong></td>
-    <td colspan="7" style="background-color: #f2f2f2;"><strong>CPL-PRODI yang dibebankan pada MK</strong></td>
+    <td colspan="7"><strong>CPL-PRODI yang dibebankan pada MK</strong></td>
   </tr>
   <tr>
     <td colspan="1" style="background-color: #ffffcc;"><strong>CPL-1</strong></td>
@@ -150,7 +150,7 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPL Description]</td>
   </tr>
   <tr>
-    <td colspan="7" style="background-color: #f2f2f2;"><strong>Capaian Pembelajaran Mata Kuliah (CPMK)</strong></td>
+    <td colspan="7"><strong>Capaian Pembelajaran Mata Kuliah (CPMK)</strong></td>
   </tr>
   <tr>
     <td colspan="1" style="background-color: #ffffcc;"><strong>CPMK-1</strong></td>
@@ -161,13 +161,13 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPMK Description]</td>
   </tr>
   <tr>
-    <td colspan="7" style="background-color: #f2f2f2;"><strong>Matrik CPL - CPMK</strong></td>
+    <td colspan="7"><strong>Matrik CPL - CPMK</strong></td>
   </tr>
   <tr>
     <td colspan="7" height="40"></td>
   </tr>
   <tr>
-    <td colspan="9" style="background-color: #f2f2f2;"><strong>Matrik CPMK pada Kemampuan akhir tiap tahapan belajar (Sub-CPMK)</strong></td>
+    <td colspan="9"><strong>Matrik CPMK pada Kemampuan akhir tiap tahapan belajar (Sub-CPMK)</strong></td>
   </tr>
   <tr>
     <td colspan="9" height="40"></td>
