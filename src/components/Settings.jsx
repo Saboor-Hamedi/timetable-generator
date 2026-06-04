@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import ThemeToggle from './ThemeToggle';
 
 const Settings = ({ theme, toggleTheme, exportOrientation, setExportOrientation }) => {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('deepseek_api_key') || '');
+  const [apiKey, setApiKey] = useState(() => {
+    return localStorage.getItem('deepseek_api_key') || 
+           import.meta.env.DEEP_SEEK_AI_API_KEY || 
+           import.meta.env.VITE_DEEP_SEEK_AI_API_KEY || 
+           '';
+  });
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
