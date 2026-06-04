@@ -135,27 +135,27 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="2">[Static Name/Title]</td>
   </tr>
   <tr>
-    <td rowspan="8" colspan="2" width="20%"><strong>Capaian Pembelajaran (CP)</strong></td>
+    <td rowspan="10" colspan="2" width="20%"><strong>Capaian Pembelajaran (CP)</strong></td>
     <td colspan="7"><strong>CPL-PRODI yang dibebankan pada MK</strong></td>
   </tr>
   <tr>
-    <td colspan="1" ><strong>CPL-1</strong></td>
-    <td colspan="6" >[AI Generated CPL Description]</td>
+    <td colspan="1"><strong>CPL-1</strong></td>
+    <td colspan="6">[AI Generated CPL Description]</td>
   </tr>
   <tr>
-    <td colspan="1" ><strong>CPL-2</strong></td>
-    <td colspan="6" >[AI Generated CPL Description]</td>
+    <td colspan="1"><strong>CPL-2</strong></td>
+    <td colspan="6">[AI Generated CPL Description]</td>
   </tr>
   <tr>
     <td colspan="7"><strong>Capaian Pembelajaran Mata Kuliah (CPMK)</strong></td>
   </tr>
   <tr>
-    <td colspan="1" ><strong>CPMK-1</strong></td>
-    <td colspan="6" >[AI Generated CPMK Description]</td>
+    <td colspan="1"><strong>CPMK-1</strong></td>
+    <td colspan="6">[AI Generated CPMK Description]</td>
   </tr>
   <tr>
-    <td colspan="1" ><strong>CPMK-2</strong></td>
-    <td colspan="6" >[AI Generated CPMK Description]</td>
+    <td colspan="1"><strong>CPMK-2</strong></td>
+    <td colspan="6">[AI Generated CPMK Description]</td>
   </tr>
   <tr>
     <td colspan="7"><strong>Matrik CPL - CPMK</strong></td>
@@ -164,10 +164,14 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="7" height="40"></td>
   </tr>
   <tr>
-    <td colspan="9"><strong>Matrik CPMK pada Kemampuan akhir tiap tahapan belajar (Sub-CPMK)</strong></td>
+    <td colspan="7"><strong>Matrik CPMK pada Kemampuan akhir tiap tahapan belajar (Sub-CPMK)</strong></td>
   </tr>
   <tr>
-    <td colspan="9" height="40"></td>
+    <td colspan="7" height="40"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Deskripsi Singkat MK</strong></td>
+    <td colspan="7">[AI Generated Course Description]</td>
   </tr>
   <tr>
     <td rowspan="2" colspan="2"><strong>Pustaka</strong></td>
