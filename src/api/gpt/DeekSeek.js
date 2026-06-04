@@ -135,8 +135,6 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="3">[Static Name/Title]</td>
     <td colspan="2">[Static Name/Title]</td>
   </tr>
-</table>
-
   <tr>
     <td rowspan="8" colspan="2" width="20%"><strong>Capaian Pembelajaran (CP)</strong></td>
     <td colspan="7"><strong>CPL-PRODI yang dibebankan pada MK</strong></td>
