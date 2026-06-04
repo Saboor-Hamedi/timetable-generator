@@ -245,6 +245,15 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
         content={activeModalData?.content}
         index={activeModalData?.index}
         exportOrientation={exportOrientation}
+        onSave={(newHtml) => {
+          setMessages(prev => {
+            const arr = [...prev];
+            arr[activeModalData.index].content = newHtml;
+            return arr;
+          });
+          showNotification('Changes saved to chat!', 'success');
+          setActiveModalData(null);
+        }}
       />
 
       <Notification 

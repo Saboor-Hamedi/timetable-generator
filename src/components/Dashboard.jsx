@@ -23,10 +23,10 @@ const Dashboard = ({ exportOrientation }) => {
     }
   };
 
-  const handleView = async (id) => {
-    const content = await getReportContent(id);
+  const handleView = async (report) => {
+    const content = await getReportContent(report.id);
     if (content) {
-      setActiveModalData({ content, index: id });
+      setActiveModalData({ ...report, content, index: report.id });
     }
   };
 
@@ -59,7 +59,7 @@ const Dashboard = ({ exportOrientation }) => {
               </p>
               <div className="flex items-center gap-2 mt-auto">
                 <button
-                  onClick={() => handleView(report.id)}
+                  onClick={() => handleView(report)}
                   className="flex-1 flex justify-center items-center gap-1.5 py-1.5 rounded-lg bg-[#f34868] hover:bg-[#ff5d7b] text-white text-[13px] font-medium transition-colors cursor-pointer"
                 >
                   <Eye className="w-3.5 h-3.5" /> View
@@ -83,6 +83,21 @@ const Dashboard = ({ exportOrientation }) => {
         content={activeModalData?.content}
         index={activeModalData?.index}
         exportOrientation={exportOrientation}
+        onSave={async (newHtml) => {
+          if (!activeModalData) return;
+          try {
+            await saveReport({
+              id: activeModalData.id,
+              title: activeModalData.title,
+              content: newHtml,
+              createdAt: activeModalData.createdAt
+            });
+            loadReports();
+            setActiveModalData(null);
+          } catch (e) {
+            console.error(e);
+          }
+        }}
       />
     </div>
   );

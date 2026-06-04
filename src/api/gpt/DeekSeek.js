@@ -80,7 +80,7 @@ If the user asks a general question or wants to communicate, reason with them an
 HOWEVER, if the user asks to "generate a timetable", "RPS", or "lesson plan" (e.g., 'generate timetable about computer vision'), you MUST generate a highly detailed RPS (Semester Learning Plan) based on the OBE (Outcome-Based Education) layout. 
 By default, generate this in English. IF the user asks in Bahasa Indonesia, you MUST generate it in Bahasa Indonesia. 
 CRITICAL INSTRUCTION: You MUST generate EXACTLY the number of meetings/rows the user requests. If they ask for 2 topics, generate EXACTLY 2 rows in the Detail Pertemuan table. DO NOT generate 8 or 14 rows by default. Pay extreme attention to the user's requested number of topics.
-ABSOLUTE STRICT RULE: The VERY FIRST character of your entire response MUST be '<' (the start of the table). You are strictly forbidden from outputting ANY introductory text, greetings, or conversational filler. NEVER output "Here is the RPS...". Start your response directly with the raw HTML <table> code.
+ABSOLUTE STRICT RULE: The VERY FIRST character of your entire response MUST be '<' (the start of the h1 title). You are strictly forbidden from outputting ANY introductory text, greetings, or conversational filler. NEVER output "Here is the RPS...". Start your response directly with the raw HTML <h1> code.
 
 When generating the RPS timetable, you MUST use the following series of Markdown and HTML tables EXACTLY. Make sure the university header, course info, and authorization section are combined into THIS EXACT HTML table to preserve the complex colspans (translated to English if the user asked in English, or kept in Bahasa if asked in Bahasa, except for the logo placeholder).
 
@@ -137,16 +137,60 @@ When generating the RPS timetable, you MUST use the following series of Markdown
   </tr>
 </table>
 
-| Capaian Pembelajaran (Learning Outcomes) | Deskripsi (Description) |
-| --- | --- |
-| **CPL-PRODI** | **CPL-1**: [CPL Description]<br>**CPL-2**: [CPL Description] |
-| **CPMK** | **CPMK-1**: [CPMK Description]<br>**CPMK-2**: [CPMK Description] |
-
-| Pustaka & Dosen (References & Lecturers) | Detail |
-| --- | --- |
-| **Pustaka Utama (Main References)** | [1] [Reference 1]<br>[2] [Reference 2] |
-| **Pustaka Pendukung (Supporting)** | [1] [Reference 3] |
-| **Dosen Pengampu (Lecturers)** | [Lecturer Names] |
+  <tr>
+    <td rowspan="8" colspan="2" width="20%"><strong>Capaian Pembelajaran (CP)</strong></td>
+    <td colspan="7" style="background-color: #f2f2f2;"><strong>CPL-PRODI yang dibebankan pada MK</strong></td>
+  </tr>
+  <tr>
+    <td colspan="1" style="background-color: #ffffcc;"><strong>CPL-1</strong></td>
+    <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPL Description]</td>
+  </tr>
+  <tr>
+    <td colspan="1" style="background-color: #ffffcc;"><strong>CPL-2</strong></td>
+    <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPL Description]</td>
+  </tr>
+  <tr>
+    <td colspan="7" style="background-color: #f2f2f2;"><strong>Capaian Pembelajaran Mata Kuliah (CPMK)</strong></td>
+  </tr>
+  <tr>
+    <td colspan="1" style="background-color: #ffffcc;"><strong>CPMK-1</strong></td>
+    <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPMK Description]</td>
+  </tr>
+  <tr>
+    <td colspan="1" style="background-color: #ffffcc;"><strong>CPMK-2</strong></td>
+    <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPMK Description]</td>
+  </tr>
+  <tr>
+    <td colspan="7" style="background-color: #f2f2f2;"><strong>Matrik CPL - CPMK</strong></td>
+  </tr>
+  <tr>
+    <td colspan="7" height="40"></td>
+  </tr>
+  <tr>
+    <td colspan="9" style="background-color: #f2f2f2;"><strong>Matrik CPMK pada Kemampuan akhir tiap tahapan belajar (Sub-CPMK)</strong></td>
+  </tr>
+  <tr>
+    <td colspan="9" height="40"></td>
+  </tr>
+  <tr>
+    <td rowspan="2" colspan="2"><strong>Pustaka</strong></td>
+    <td colspan="2"><strong>Utama :</strong></td>
+    <td colspan="5">
+      1. [Reference 1]<br>
+      2. [Reference 2]
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Pendukung :</strong></td>
+    <td colspan="5">
+      1. [Reference 3]
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Dosen Pengampu</strong></td>
+    <td colspan="7">[Lecturer Names]</td>
+  </tr>
+</table>
 
 ### Detail Pertemuan (Meeting Details)
 

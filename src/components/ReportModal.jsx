@@ -4,21 +4,22 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
-const ReportModal = ({ isOpen, onClose, content, index, exportOrientation }) => {
+const ReportModal = ({ isOpen, onClose, content, index, exportOrientation, onSave }) => {
   const [exporting, setExporting] = useState(false);
 
   if (!isOpen) return null;
 
   const handleExport = () => {
+    const contentElement = document.getElementById(`modal-report-content-${index}`);
+    if (!contentElement) {
+      return;
+    }
+    
+    // Grab HTML synchronously BEFORE state update re-renders the component and wipes edits!
+    const htmlOutput = contentElement.innerHTML;
+
     setExporting(true);
     setTimeout(() => {
-      const contentElement = document.getElementById(`modal-report-content-${index}`);
-      if (!contentElement) {
-        setExporting(false);
-        return;
-      }
-      
-      const htmlOutput = contentElement.innerHTML;
   
       const fullHtml = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
@@ -111,6 +112,15 @@ const ReportModal = ({ isOpen, onClose, content, index, exportOrientation }) => 
             className="px-4 py-1.5 rounded-md bg-transparent hover:bg-white/5 text-white/80 text-xs font-medium transition-colors"
           >
             Cancel
+          </button>
+          <button
+            onClick={() => {
+              const el = document.getElementById(`modal-report-content-${index}`);
+              if (el && onSave) onSave(el.innerHTML);
+            }}
+            className="flex items-center gap-2 px-4 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-medium transition-colors"
+          >
+            Save Changes
           </button>
           <button
             onClick={handleExport}
