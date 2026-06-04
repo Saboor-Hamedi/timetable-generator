@@ -124,13 +124,12 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="1">[Static Current Date: ${new Date().toISOString().split('T')[0]}]</td>
   </tr>
   <tr>
-    <td colspan="2"><strong>OTORISASI (AUTHORIZATION)</strong></td>
+    <td rowspan="2" colspan="2"><strong>OTORISASI (AUTHORIZATION)</strong></td>
     <td colspan="2"><strong>Pengembang RPS (RPS Developer)</strong></td>
     <td colspan="3"><strong>Koordinator RMK (RMK Coordinator)</strong></td>
     <td colspan="2"><strong>Koordinator Program Studi (Study Program Coordinator)</strong></td>
   </tr>
   <tr>
-    <td colspan="2"></td>
     <td colspan="2">[Static Name/Title]</td>
     <td colspan="3">[Static Name/Title]</td>
     <td colspan="2">[Static Name/Title]</td>
@@ -140,23 +139,23 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="7"><strong>CPL-PRODI yang dibebankan pada MK</strong></td>
   </tr>
   <tr>
-    <td colspan="1" style="background-color: #ffffcc;"><strong>CPL-1</strong></td>
-    <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPL Description]</td>
+    <td colspan="1" ><strong>CPL-1</strong></td>
+    <td colspan="6" >[AI Generated CPL Description]</td>
   </tr>
   <tr>
-    <td colspan="1" style="background-color: #ffffcc;"><strong>CPL-2</strong></td>
-    <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPL Description]</td>
+    <td colspan="1" ><strong>CPL-2</strong></td>
+    <td colspan="6" >[AI Generated CPL Description]</td>
   </tr>
   <tr>
     <td colspan="7"><strong>Capaian Pembelajaran Mata Kuliah (CPMK)</strong></td>
   </tr>
   <tr>
-    <td colspan="1" style="background-color: #ffffcc;"><strong>CPMK-1</strong></td>
-    <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPMK Description]</td>
+    <td colspan="1" ><strong>CPMK-1</strong></td>
+    <td colspan="6" >[AI Generated CPMK Description]</td>
   </tr>
   <tr>
-    <td colspan="1" style="background-color: #ffffcc;"><strong>CPMK-2</strong></td>
-    <td colspan="6" style="background-color: #ffffcc;">[AI Generated CPMK Description]</td>
+    <td colspan="1" ><strong>CPMK-2</strong></td>
+    <td colspan="6" >[AI Generated CPMK Description]</td>
   </tr>
   <tr>
     <td colspan="7"><strong>Matrik CPL - CPMK</strong></td>
