@@ -43,6 +43,9 @@ class DeepSeek {
 
         if (!response.ok) {
           const text = await response.text();
+          if (response.status === 401 || response.status === 402 || (text && text.includes('authentication_error'))) {
+            throw new Error('Your DeepSeek is running out of token');
+          }
           throw new Error(`DeepSeek API error ${response.status}: ${text || response.statusText}`);
         }
 
@@ -50,6 +53,10 @@ class DeepSeek {
       } catch (error) {
         clearTimeout(timeoutId);
         lastError = error;
+
+        if (error.message === 'Your DeepSeek is running out of token') {
+          throw error;
+        }
 
         if (attempt < retries) {
           await this.wait(500 * (attempt + 1));
@@ -171,21 +178,7 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="2"><strong>Deskripsi Singkat MK</strong></td>
     <td colspan="7">[AI Generated Course Description]</td>
   </tr>
-  <tr>
-    <td rowspan="2" colspan="2"><strong>Pustaka</strong></td>
-    <td colspan="2"><strong>Utama :</strong></td>
-    <td colspan="5">
-      1. [Reference 1]<br>
-      2. [Reference 2]
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2"><strong>Pendukung :</strong></td>
-    <td colspan="5">
-      1. [Reference 3]
-    </td>
-  </tr>
-  <tr>
+    <tr>
     <td colspan="2"><strong>Dosen Pengampu</strong></td>
     <td colspan="7">[Lecturer Names]</td>
   </tr>
@@ -239,15 +232,15 @@ Fill in the template with realistic, high-quality academic content related to th
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      
+
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop() || '';
-      
+
       for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed || trimmed === 'data: [DONE]') continue;
-        
+
         if (trimmed.startsWith('data: ')) {
           try {
             const data = JSON.parse(trimmed.slice(6));
@@ -266,7 +259,7 @@ Fill in the template with realistic, high-quality academic content related to th
         }
       }
     }
-    
+
     // Ensure final state is always pushed
     if (onChunk) onChunk('', fullContent);
 
