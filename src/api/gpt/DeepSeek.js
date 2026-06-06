@@ -178,7 +178,27 @@ When generating the RPS timetable, you MUST use the following series of Markdown
     <td colspan="2"><strong>Deskripsi Singkat MK</strong></td>
     <td colspan="7">[AI Generated Course Description]</td>
   </tr>
-    <tr>
+  <tr>
+    <td rowspan="4" colspan="2"><strong>Pustaka</strong></td>
+    <td colspan="2"><strong>Utama :</strong></td>
+    <td colspan="5"></td>
+  </tr>
+  <tr>
+    <td colspan="7">
+      1. [Reference 1]<br>
+      2. [Reference 2]
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Pendukung :</strong></td>
+    <td colspan="5"></td>
+  </tr>
+  <tr>
+    <td colspan="7">
+      1. [Reference 3]
+    </td>
+  </tr>
+  <tr>
     <td colspan="2"><strong>Dosen Pengampu</strong></td>
     <td colspan="7">[Lecturer Names]</td>
   </tr>

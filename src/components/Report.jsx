@@ -3,7 +3,7 @@ import { Loader2, Download, ArrowUp, Copy, Check, Send, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import deepSeek from '../api/gpt/DeekSeek';
+import deepSeek from '../api/gpt/DeepSeek';
 import ReportModal from './ReportModal';
 import Notification from './Notification';
 import { saveReport } from '../api/db';
@@ -14,25 +14,25 @@ const AssistantMessage = ({ content, index, isStreaming, onOpenModal, onSave }) 
   return (
     <div className="flex flex-col gap-4 w-full mb-8">
       <div id={`report-content-${index}`} className="text-white/90 leading-relaxed max-w-full overflow-x-auto text-base">
-        <ReactMarkdown 
+        <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw]}
           components={{
-            table: ({node, ...props}) => <table className="w-full border-collapse border border-white/20 mb-6 rounded-lg overflow-hidden mx-1.5 sm:mx-0" style={{ width: 'calc(100% - 12px)' }} {...props} />,
-            th: ({node, ...props}) => <th className="border border-white/20 bg-white/10 p-2 text-[13px] text-left font-semibold" {...props} />,
-            td: ({node, ...props}) => <td className="border border-white/20 p-2 text-[13px]" {...props} />,
-            h1: ({node, ...props}) => <h1 className="text-xl sm:text-2xl font-bold mb-6 mt-4 text-white text-center leading-snug" {...props} />,
-            h2: ({node, ...props}) => <h2 className="text-lg sm:text-xl font-bold mb-3 mt-5" {...props} />,
-            h3: ({node, ...props}) => <h3 className="text-base sm:text-lg font-bold mb-2 mt-4" {...props} />,
-            p: ({node, ...props}) => <p className="mb-4" {...props} />,
-            ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
-            ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />
+            table: ({ node, ...props }) => <table className="w-full border-collapse border border-white/20 mb-6 rounded-lg overflow-hidden mx-1.5 sm:mx-0" style={{ width: 'calc(100% - 12px)' }} {...props} />,
+            th: ({ node, ...props }) => <th className="border border-white/20 bg-white/10 p-2 text-[13px] text-left font-semibold" {...props} />,
+            td: ({ node, ...props }) => <td className="border border-white/20 p-2 text-[13px]" {...props} />,
+            h1: ({ node, ...props }) => <h1 className="text-xl sm:text-2xl font-bold mb-6 mt-4 text-white text-center leading-snug" {...props} />,
+            h2: ({ node, ...props }) => <h2 className="text-lg sm:text-xl font-bold mb-3 mt-5" {...props} />,
+            h3: ({ node, ...props }) => <h3 className="text-base sm:text-lg font-bold mb-2 mt-4" {...props} />,
+            p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+            ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-4" {...props} />,
+            ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-4" {...props} />
           }}
         >
           {content}
         </ReactMarkdown>
       </div>
-      
+
       <div className="flex items-center gap-3 border-t border-white/10 pt-3 mt-2">
         {isStreaming ? (
           <div className="flex items-center gap-1.5 px-3 py-1.5 text-white/50 text-xs font-medium">
@@ -141,7 +141,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
 
     const userMessage = { role: 'user', content: prompt };
     const updatedMessages = [...messages, userMessage];
-    
+
     setMessages(updatedMessages);
     setPrompt('');
     setLoading(true);
@@ -149,7 +149,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
     try {
       const assistantMsgIndex = updatedMessages.length;
       setMessages([...updatedMessages, { role: 'assistant', content: '' }]);
-      
+
       await deepSeek.generateReport(updatedMessages, {
         onChunk: (delta, fullContent) => {
           setMessages(prev => {
@@ -180,7 +180,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto w-full flex flex-col">
         <div className={`max-w-7xl mx-auto w-full px-2 sm:px-6 lg:px-8 py-4 sm:py-8 ${messages.length === 0 ? 'flex-1 flex flex-col' : ''}`}>
-          
+
           {messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-white/40 px-4 text-center min-h-[50vh]">
               <h2 className="text-lg sm:text-2xl font-semibold mb-2">Universitas Pamulang</h2>
@@ -193,17 +193,17 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
                   {msg.role === 'user' ? (
                     <UserMessage content={msg.content} />
                   ) : (
-                    <AssistantMessage 
-                      content={msg.content} 
-                      index={idx} 
-                      isStreaming={loading && idx === messages.length - 1} 
+                    <AssistantMessage
+                      content={msg.content}
+                      index={idx}
+                      isStreaming={loading && idx === messages.length - 1}
                       onOpenModal={setActiveModalData}
                       onSave={handleSaveReport}
                     />
                   )}
                 </div>
               ))}
-              
+
               <div ref={messagesEndRef} />
             </div>
           )}
@@ -239,7 +239,7 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
         </div>
       </div>
 
-      <ReportModal 
+      <ReportModal
         isOpen={!!activeModalData}
         onClose={() => setActiveModalData(null)}
         content={activeModalData?.content}
@@ -256,9 +256,9 @@ const Report = ({ exportOrientation, messages, setMessages }) => {
         }}
       />
 
-      <Notification 
-        notification={notification} 
-        onClose={() => setNotification(null)} 
+      <Notification
+        notification={notification}
+        onClose={() => setNotification(null)}
       />
     </div>
   );
