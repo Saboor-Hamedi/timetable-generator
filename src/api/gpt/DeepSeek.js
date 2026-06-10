@@ -212,7 +212,7 @@ When generating the RPS timetable, you MUST use the following series of Markdown
 | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
 Fill in the template with realistic, high-quality academic content related to the user's topic. Translate the table headers to the appropriate language based on the user's prompt (English by default, Bahasa Indonesia if requested in Bahasa). DO NOT USE EMOJIS.`,
-      maxTokens = 8000,
+      maxTokens = 10000,
       temperature = 0.5,
       model = this.model,
       retries = 2,
